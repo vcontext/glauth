@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -10,7 +11,6 @@ import (
 	docopt "github.com/docopt/docopt-go"
 	"github.com/fsnotify/fsnotify"
 	"github.com/glauth/glauth/pkg/config"
-	"github.com/glauth/glauth/pkg/frontend"
 	gologgingr "github.com/glauth/glauth/pkg/gologgingr"
 	"github.com/glauth/glauth/pkg/server"
 	"github.com/glauth/glauth/pkg/stats"
@@ -119,13 +119,13 @@ func startService() {
 	stats.General.Set("version", stats.Stringer(LastGitTag))
 
 	// web API
-	if activeConfig.API.Enabled {
-		log.V(6).Info("Web API enabled")
-		go frontend.RunAPI(
-			frontend.Logger(log),
-			frontend.Config(&activeConfig.API),
-		)
-	}
+	// if activeConfig.API.Enabled {
+	// 	log.V(6).Info("Web API enabled")
+	// 	go frontend.RunAPI(
+	// 		frontend.Logger(log),
+	// 		frontend.Config(&activeConfig.API),
+	// 	)
+	// }
 
 	startConfigWatcher()
 
@@ -171,6 +171,12 @@ func startService() {
 
 func startConfigWatcher() {
 	configFileLocation := getConfigLocation()
+
+	// maybe it works now?  prometheus at me alive with this on solaris.
+	if runtime.GOOS == "solaris" || runtime.GOOS == "illumos" {
+		log.Info("Will not start watcher on " + runtime.GOOS + ", because fsnotify/fen is broken on this platform.")
+		return
+	}
 
 	if strings.HasPrefix(configFileLocation, "s3://") {
 		return

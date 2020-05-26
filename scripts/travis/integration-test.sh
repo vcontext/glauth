@@ -29,11 +29,11 @@ fi
 echo "";
 echo ""
 echo "Version string of tested binary:"
-"$TRAVIS_BUILD_DIR/bin/glauth64" --version
+"$TRAVIS_BUILD_DIR/bin/glauth-darwin-amd64" --version
 echo ""
 
 # Start in background, capture PID
-"$TRAVIS_BUILD_DIR/bin/glauth64" -c "$TRAVIS_BUILD_DIR/scripts/travis/test-config.cfg" &> /dev/null &
+"$TRAVIS_BUILD_DIR/bin/glauth-darwin-amd64" -c "$TRAVIS_BUILD_DIR/scripts/travis/test-config.cfg" &> /dev/null &
 
 # Use this instead to see glauth logs while running
 # "$TRAVIS_BUILD_DIR/bin/glauth64" -c "$TRAVIS_BUILD_DIR/scripts/travis/test-config.cfg" &
